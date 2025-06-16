@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #444;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, select, button {
+            margin-top: 10px;
+            padding: 8px;
+            width: 280px;
+            max-width: 100%;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        ul {
+            list-style: decimal inside;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>📚 Book Recommender</h2>
+
+    <!-- Form to get book name by index -->
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            <label>🔍 Get Book Title by Index:</label><br>
+            <input type="number" name="book_index" min="0" placeholder="Enter book index">
+            <br>
+            <button type="submit" name="action" value="get_title">Get Title</button>
+        </form>
+        {% if result_title %}
+            <div class="result">✅ Title at index: <em>{{ result_title }}</em></div>
+        {% endif %}
+    </div>
+
+    <!-- Form to get book recommendations -->
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            <label>🎯 Get Recommendations by Title:</label><br>
+            <input type="text" name="book_name" list="book_list" placeholder="Enter book title">
+            <datalist id="book_list">
+                {% for title in titles %}
+                    <option value="{{ title }}">
+                {% endfor %}
+            </datalist>
+            <br>
+            <button type="submit" name="action" value="recommend">Recommend Books</button>
+        </form>
+        {% if search %}
+            <div class="result">📘 Recommendations for <em>{{ search }}</em>:</div>
+            <ul>
+                {% for rec in recommendations %}
+                    <li>{{ rec }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if error %}
+            <div class="result" style="color: red;">⚠️ {{ error }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
